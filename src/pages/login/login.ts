@@ -4,6 +4,7 @@ import { trigger, state, style, transition, animate, keyframes  } from '@angular
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserProvider } from '../../providers/user/user';
 import { UserBandsPage } from '../user-bands/user-bands';
+import { TabsPage } from '../tabs/tabs';
 
 
 /**
@@ -102,7 +103,7 @@ export class LoginPage {
         data => {
           console.log('user login return', data);
           loading.setContent(this.user.profile.chuckQuote);
-          loading.dismiss() ; this.navCtrl.setRoot(UserBandsPage)
+          loading.dismiss() ; this.navCtrl.setRoot(TabsPage)
           // this.user.getProfile(form.value.username, data)
           //   .subscribe(
           //     data => console.log('profile returb', data),

@@ -11,6 +11,7 @@ import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 import { LoginPage } from '../pages/login/login';
 import { UserBandsPage } from '../pages/user-bands/user-bands';
+import { ProfilePage } from '../pages/profile/profile';
 
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -19,6 +20,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { UserProvider } from '../providers/user/user';
 import { CoreProvider } from '../providers/core/core';
 import { AuthProvider } from '../providers/auth/auth';
+import { Camera } from '@ionic-native/camera';
+import { CameraProvider} from '../providers/core/camera';
+
 
 @NgModule({
   declarations: [
@@ -28,7 +32,8 @@ import { AuthProvider } from '../providers/auth/auth';
     HomePage,
     TabsPage,
     LoginPage,
-    UserBandsPage
+    UserBandsPage,
+    ProfilePage
   ],
   imports: [
     BrowserModule,
@@ -44,7 +49,8 @@ import { AuthProvider } from '../providers/auth/auth';
     HomePage,
     TabsPage,
     LoginPage,
-    UserBandsPage
+    UserBandsPage,
+    ProfilePage
   ],
   providers: [
     StatusBar,
@@ -52,7 +58,10 @@ import { AuthProvider } from '../providers/auth/auth';
     UserProvider,
     CoreProvider,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    AuthProvider
+    AuthProvider,
+    Camera,
+    CameraProvider
+    
   ]
 })
 export class AppModule {}

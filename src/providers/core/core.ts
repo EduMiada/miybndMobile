@@ -9,11 +9,25 @@ export class CoreProvider {
   public server = 'http://localhost:1337' ;
 
   public  API_ENDPOINT = {
-      API_REST_ENDPOINT: '/api',
-      API_AUTHENTICATE : '/api/auth/signin',
-      API_PROJECTS: '/ppm/rest/v1/projects',
-      API_RESOURCES: '/ppm/rest/v1/resources',
-      API_TASKS: '/ppm/rest/v1/tasks'
+    API_REST_ENDPOINT: '/api',
+    API_AUTHENTICATE : '/api/auth/signin',
+    API_AUTH_FACEBOOK :  '/api/auth/facebook',
+    API_FACEBOOK_CLIENT_ID: '162506894117176',
+    API_SPOTIFY_CLIENT_ID: '5063d7fc578d4b928e96e050790860c9',
+    API_SPOTIFY_CONNECT: 'api/connectspotify',
+    API_OAUTH_CALLBACK: '/localhost/callback',
+    API_SUGGESTIONS :  '/api/suggestions' ,
+    API_SONGS :  '/api/song',
+    API_USERS: '/api/user',
+    API_USERS_ACCOUNTS: '/accounts',
+    API_USER_PICTURE: '/picture',
+    API_USER_PROFILE: '/profile',
+    API_FEEDS: '/feeds',
+    API_FEED_COMMENT: '/comments',
+    API_CURRENT_BAND : '/currentband',
+    API_BANDS: '/band',
+    API_SEARCH_NEW_TRACK: '/searchtrack',
+    API_ADD_MUSIXMATCH_TRACK:'/addmusicxmatch'
   };
 
   constructor(public http: Http) {
@@ -36,7 +50,7 @@ export class CoreProvider {
       let headers = new Headers();
 
       headers.append('Content-Type' , 'application/json');
-      headers.append('authToken', this.token);
+      headers.append('authorization', 'JWT ' + this.token);
 
       console.log(serverUrl + url);
       console.log(this.token);
@@ -50,23 +64,20 @@ export class CoreProvider {
       let headers = new Headers();
 
       headers.append('Content-Type' , 'application/json');
-      headers.append('authToken', this.token);
+      headers.append('Authorization', 'JWT ' + this.token);
 
       return  this.http.post(serverUrl + url, data, {headers:headers});
   }
 
   //return http post response
-  put(url){
+  put(url, data){
       let serverUrl =  this.server;
       let headers = new Headers();
 
-      console.log('token', this.token);
-      console.log('url', serverUrl + url);
+      headers.append('Content-Type', 'application/json');
+      headers.append('Authorization', 'JWT ' + this.token);
 
-      headers.append('Content-Type', 'application/x-www-form-urlencoded');
-      headers.append('authToken', this.token);
-
-      return  this.http.put(serverUrl + url, '', {headers:headers});
+      return  this.http.put(serverUrl + url, data, {headers:headers});
   }
 
   //return http post response
@@ -75,7 +86,7 @@ export class CoreProvider {
       let headers = new Headers();
 
       headers.append('Content-Type' , 'application/json');
-      headers.append('authToken', this.token);
+      headers.append('Authorization', 'JWT ' + this.token);
       return  this.http.delete(serverUrl + url, {headers:headers} );
   }
 

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { CoreProvider } from '../core/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/Rx';
+import { CameraProvider} from '../core/camera';
+
 //import 'rxjs/add/operator/map';
 
 
@@ -16,13 +18,21 @@ export class UserProvider {
           firstName: undefined,
           lastName: undefined,
           displayName: undefined,
+          deviceId:undefined,
+          bands: [],
+          fb:false,
+          facebookToken:false,
+          spotifyToken:false,
+          musicProfile: {about:'', instrument:'', experience:'', styles:[], influencies:[]},
+          contact: {bio:'', city:'', area:'', zip:''},
+          channels: [{channel:'', name:'', url:''}],
           chuckQuote: undefined
   }
 
   public server = '';
   public token = '';
 
-  constructor(private core:CoreProvider) {
+  constructor(private core:CoreProvider, private camera:CameraProvider) {
     console.log('Hello UserProvider Provider');
   }
 
@@ -68,19 +78,17 @@ export class UserProvider {
       .catch(this.handleError)
   };
 
-  // getProfile(userName, token){
-  //   let filter = '(uniqueName = \'' + userName + '\')';
-  //   let activeFilter = '((isActive = true) and ' +  filter + ')';
-  //   let fields = '&fields=fullName,firstName,lastName';
-  //   let url = this.core.API_ENDPOINT.API_RESOURCES +  '?filter=' + activeFilter + fields;
+  //load user profile to update maybe move to auth code -- change neeed to rest api
+  getProfile () {
 
-  //   console.log('get profile token', this.core.token);
+    console.log('Profile', this.profile);
 
-  //   return this.core.get(url)
-  //     .map(res => res.json()._results[0])
-  //     .map(res => this.setSession(res,null))
-  //     .catch(this.handleError);
-  // }
+    let url = this.core.API_ENDPOINT.API_USERS + '/' + this.profile.id;
+
+    return this.core.get(url)
+      .map(res => this.setProfile(res.json().data))
+      .catch(this.handleError);
+    };
 
   //hande http observer error
   handleError(error) {
@@ -92,10 +100,82 @@ export class UserProvider {
     this.profile.token = token;
   }
 
+  getPicture(source){
+    let options = {
+        quality: 50,
+        destinationType:0, // Camera.DestinationType.DATA_URL,
+        sourceType: source, //Camera.PictureSourceType.CAMERA,
+        allowEdit: true,
+        encodingType: 0, //Camera.EncodingType.JPEG,
+        saveToPhotoAlbum: false,
+        correctOrientation:true
+    };
+
+    //let user = this.core.getStoreObject('user');
+
+    return this.camera.getPicture(options)
+      .then((imageData) => {
+        let base64Image = "data:image/jpeg;base64," + imageData;
+        this.setAvatar(base64Image)
+        .subscribe(
+          res => {  this.profile.avatar = base64Image
+                    //user.data.picture = base64Image,
+                   // this.core.setStoreObject('user', user);
+                },
+          err => err
+        );
+
+      },(err) => {
+        return err;
+      });
+
+  }
+
+  // attempt login or signup
+  setAvatar (picture) {
+    let url = this.core.API_ENDPOINT.API_USERS + '/' + this.profile.id + this.core.API_ENDPOINT.API_USER_PICTURE;
+    let body = JSON.stringify({picture:picture});
+
+    return this.core.post(url, body)
+        .map(res => res.json())
+        .catch(this.handleError);
+  };
+
+  //update profile
+  updateProfile (profile, contact, channels) {
+    let url = this.core.API_ENDPOINT.API_USERS + '/' + this.profile.id;
+
+    let body = JSON.stringify({username: this.profile.displayName,
+                                firstName: this.profile.firstName,
+                                lastName: this.profile.lastName,
+                                displayName: this.profile.displayName,
+                                profile:profile, contact:contact, channels:channels});
+
+    console.log(body);
+
+    return this.core.put(url, body)
+        .map(res => res.json())
+      //  .map(data => this.setSession(data))
+      //  .map(this.profile = data)
+        .catch(this.handleError);
+  };
+
+
+
+
+  setProfile (data) {
+    // //music profile
+    this.profile.avatar = data.avatar || '';
+    this.profile.musicProfile = data.profile;
+    this.profile.contact = data.contact;
+    this.profile.channels = data.channels;
+    this.profile.bands = data.bands;
+  };
+
   setSession (data, token) {
     console.log('user', data);
 
-    this.profile.id = data.user.ID || undefined;
+    this.profile.id = data.user.id || undefined;
     this.profile.token = data.token || undefined;
     this.profile.avatar = data.user.avatar || undefined;
     this.profile.username = data.user.username || undefined;
@@ -103,6 +183,7 @@ export class UserProvider {
     this.profile.firstName = data.user.firstName || undefined;
     this.profile.lastName = data.user.lastName || undefined;
     this.profile.displayName = data.user.displayName || undefined;
+    this.profile.bands = data.user.bands || undefined;
     this.profile.chuckQuote = data.chuckQuote || undefined;
     this.profile.token = token || undefined;
 

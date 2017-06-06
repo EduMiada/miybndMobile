@@ -1,0 +1,79 @@
+<!--
+  Generated template for the ProfilePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+
+<ion-header >
+  <ion-navbar color="primary">
+    <ion-title>Profile</ion-title>
+    <ion-buttons end>
+      <button (click)="updateProfile()" ion-button icon-only color="light" clear>
+        <ion-icon name="send"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding >
+
+  
+ 
+ <div  color="primary" >
+  	<img class="avatar" (click)="takePicture()" src="{{user.profile.avatar}}"/>
+    <div class="username" (click)="profileModal()" >{{user.profile.displayName}}</div>  
+    <div class="bio">{{user.profile.musicProfile.about}}<p></div>
+<!--
+    <ul class="data">
+      <li>
+        <span class="entypo-heart"> 127</span>
+      </li>
+      <li>
+        <span class="entypo-eye"> 853</span>
+      </li>
+      <li>
+        <span class="entypo-user"> 311</span>
+      </li>
+   </ul> -->
+</div>
+
+<ion-list>
+  <ion-item-group>
+    <ion-item-divider color="light">Social</ion-item-divider>
+      <ion-item>
+        <ion-label>Facebook</ion-label>
+        <ion-toggle disabled checked="false"></ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-label>Spotify</ion-label>
+        <ion-toggle ></ion-toggle>
+      </ion-item>
+
+     <ion-item-divider color="light">Musical Profile</ion-item-divider>
+       <ion-item>
+           <ion-label>Instrument</ion-label>
+           <ion-select (change)="updateProfile()" [(ngModel)]="user.profile.musicProfile.instrument" multiple="false" cancelText="Cancel" okText="OK">
+             <ion-option *ngFor="let instrument of instrumentList" value="{{instrument.code}}" >{{instrument.name}}</ion-option>
+           </ion-select>
+       </ion-item>
+       <ion-item>
+           <ion-label>Experience Level</ion-label>
+           <ion-select (change)="updateProfile()" [(ngModel)]="user.profile.musicProfile.experience" multiple="false" cancelText="Cancel" okText="OK">
+             <ion-option *ngFor="let level of experienceList" value="{{level.code}}" >{{level.name}}</ion-option>
+           </ion-select>
+       </ion-item>
+
+     <ion-item-divider color="light">My Bands</ion-item-divider>
+      <ion-item *ngFor="let band of user.profile.bands" (click)="viewBand(band._id)">
+        <ion-avatar item-left>
+          <img src="img/avatar-finn.png">
+        </ion-avatar>
+        <h2>{{band.name}}</h2>
+      </ion-item>
+   </ion-item-group>
+</ion-list>
+
+
+</ion-content>
